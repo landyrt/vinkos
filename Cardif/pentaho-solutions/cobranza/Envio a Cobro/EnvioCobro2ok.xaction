@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>Envio a Cobro OK</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author/>  
+    <description>Envío a cobro de recibos con estatus En proceso</description>  
+    <help/>  
+    <result-type/>  
+    <icon/> 
+  </documentation>
+
+  <inputs> 
+    <usuario type="string"> 
+      <sources> 
+        <security>principalName</security> 
+      </sources>  
+      <default-value><![CDATA[landy]]></default-value> 
+    </usuario>  
+    <IDCAMPANIA type="integer"> 
+      <default-value><![CDATA[0]]></default-value>  
+      <sources> 
+        <request>IDCAMPANIA</request> 
+      </sources> 
+    </IDCAMPANIA>  
+    <campania_list type="result-set"> 
+      <default-value type="result-set"> 
+        <row> 
+          <idCamp>0</idCamp> 
+        </row> 
+      </default-value>  
+      <columns> 
+        <idCamp type="string"/> 
+      </columns> 
+    </campania_list>  
+    <tc-result type="result-set"> 
+      <default-value type="result-set"> 
+        <row> 
+          <MEDIOCOBROTC>0|No hay medio de cobro TC</MEDIOCOBROTC> 
+        </row> 
+      </default-value>  
+      <sources> 
+        <request>tc-result</request> 
+      </sources>  
+      <columns> 
+        <MEDIOCOBROTC type="string"/> 
+      </columns> 
+    </tc-result>  
+    <td-result type="result-set"> 
+      <default-value type="result-set"> 
+        <row> 
+          <MEDIOCOBROTD>0|No hay medio de cobro TD</MEDIOCOBROTD> 
+        </row> 
+      </default-value>  
+      <sources> 
+        <request>td-result</request> 
+      </sources>  
+      <columns> 
+        <MEDIOCOBROTD type="string"/> 
+      </columns> 
+    </td-result>  
+    <IDMEDIOCOBROTC type="string"> 
+      <sources> 
+        <request>IDMEDIOCOBROTC</request> 
+      </sources>  
+      <default-value><![CDATA[0|No hay Medio de Cobro TC]]></default-value> 
+    </IDMEDIOCOBROTC>  
+    <IDMEDIOCOBROTD type="string"> 
+      <sources> 
+        <request>IDMEDIOCOBROTD</request> 
+      </sources>  
+      <default-value><![CDATA[0|No hay Medio de cobro TD]]></default-value> 
+    </IDMEDIOCOBROTD> 
+  </inputs>
+
+  <outputs> 
+    <termino type="string"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
+    </termino> 
+  </outputs>
+
+  <resources> 
+    <pageTemplate> 
+      <solution-file> 
+        <location>DependentParameterTemplate2.html</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </pageTemplate> 
+  </resources>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Get status Proceso</action-type>
+      <action-outputs> 
+        <query-result type="result-set" mapping="status_result"/> 
+      </action-outputs>
+      <component-definition> 
+        <query><![CDATA[select status as statusProceso from proceso where idProceso=1]]></query>  
+        <live><![CDATA[true]]></live>  
+        <jndi><![CDATA[oracle]]></jndi> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>JavascriptRule</component-name>
+      <action-type>Asigna valor</action-type>
+      <action-inputs> 
+        <status_result type="result-set"/> 
+      </action-inputs>
+      <action-outputs> 
+        <statusProceso type="integer"/> 
+      </action-outputs>
+      <component-definition> 
+        <script><![CDATA[function asignaValor(status_result){
+	var results = new JavaScriptResultSet();
+	results = status_result;
+	return results.getValueAt( 0,0);	
+}
+asignaValor(status_result);]]></script> 
+      </component-definition> 
+    </action-definition>
+  
+    <actions> 
+      <condition><![CDATA[statusProceso==0]]></condition>  
+      <action-definition> 
+        <component-name>JavascriptRule</component-name>
+        <action-type>fechaProceso</action-type>
+        <action-outputs> 
+          <fechaProceso type="string"/> 
+        </action-outputs>
+        <component-definition> 
+          <script><![CDATA[function displayTime()
+    {
+        var localTime = new Date();
+        var year= localTime.getFullYear();
+        var month= ("0" + (localTime.getMonth() + 1)).slice(-2);
+        var date = ("0" + localTime.getDate()).slice(-2);
+        var hours = localTime.getHours();
+        var minutes = localTime.getMinutes();
+        var seconds = localTime.getSeconds();
+        return year+'-'+month+'-'+date+' '+hours+':'+minutes+':'+seconds;
+    }
+displayTime();]]></script> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>JavascriptRule</component-name>
+        <action-type>qry Proceso</action-type>
+        <action-inputs/>
+        <action-outputs> 
+          <qryProceso type="string"/> 
+        </action-outputs>
+        <component-definition> 
+          <script><![CDATA[function creaQry()
+{
+	var qryProceso='update proceso set status=2 where idProceso=1;';
+	return qryProceso;
+}
+creaQry();]]></script> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>SQLExecute</component-name>
+        <action-type>update statusProceso</action-type>
+        <action-inputs> 
+          <query type="string" mapping="qryProceso"/> 
+        </action-inputs>
+        <action-outputs/>
+        <component-definition> 
+          <force_single_statement><![CDATA[false]]></force_single_statement>  
+          <multi_statement_separator><![CDATA[;]]></multi_statement_separator>  
+          <jndi><![CDATA[oracle]]></jndi> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>JavascriptRule</component-name>
+        <action-type>qry ProcesoControl</action-type>
+        <action-inputs> 
+          <usuario type="string"/>  
+          <fechaProceso type="string"/> 
+        </action-inputs>
+        <action-outputs> 
+          <qryProceso2 type="string"/> 
+        </action-outputs>
+        <component-definition> 
+          <script><![CDATA[function creaQry2(usuarioProceso,fechaProceso)
+{
+	//var qryProceso='INSERT INTO procesoControl(idProceso,usuario,fecha) values(1,'+usuarioProceso+','+fechaProceso+');';
+	var qryProceso='INSERT INTO procesoControl(idProceso,usuario,fecha) values(1,\''+usuarioProceso+'\',TIMESTAMP \''+fechaProceso+'\');';
+	return qryProceso;
+}
+creaQry2(usuario,fechaProceso);]]></script> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>SQLExecute</component-name>
+        <action-type>insert procesoControl</action-type>
+        <action-inputs> 
+          <query type="string" mapping="qryProceso2"/> 
+        </action-inputs>
+        <component-definition> 
+          <jndi><![CDATA[oracle]]></jndi> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>KettleComponent</component-name>
+        <action-type>Job llenaTablaTMP</action-type>
+        <action-resources/>
+        <action-outputs> 
+          <kettle-execution-log type="string" mapping="llenaTablaTMP.log"/>  
+          <kettle-execution-status type="string" mapping="tablatmpsts"/> 
+        </action-outputs>
+        <component-definition> 
+          <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+          <job><![CDATA[llenaTablaTMP]]></job>  
+          <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>SQLLookupRule</component-name>
+        <action-type>Campania count(tipoMedioCobro)&gt;1</action-type>
+        <action-outputs> 
+          <query-result type="result-set" mapping="campania_qry"/> 
+        </action-outputs>
+        <component-definition> 
+          <query><![CDATA[select DISTINCT a.idCampania AS idCampa       
+from reciboStatus a 
+join (
+  select x.idCampania, y.tipoMedioCobro, count(x.idMedioCobro) conteo 
+  from campaniaMedioCobro x 
+  left join cat_medioCobro y on x.idMedioCobro=y.idMedioCobro 
+  group by x.idCampania, y.tipoMedioCobro 
+  having count(x.idMedioCobro) >1 
+) b on a.idCampania=b.idCampania   
+WHERE a.activo=1 
+AND a.idStatus in (3,8)]]></query>  
+          <live><![CDATA[false]]></live>  
+          <jndi><![CDATA[oracle]]></jndi> 
+        </component-definition> 
+      </action-definition>
+  
+      <actions> 
+        <condition><![CDATA[campania_qry.getRowCount()>0]]></condition>  
+        <action-definition> 
+          <component-name>SQLLookupRule</component-name>
+          <action-type>Campanias</action-type>
+          <action-outputs> 
+            <query-result type="result-set" mapping="campania_list"/> 
+          </action-outputs>
+          <component-definition> 
+            <live><![CDATA[false]]></live>  
+            <jndi><![CDATA[oracle]]></jndi>  
+            <query><![CDATA[select DISTINCT a.idCampania AS idCamp, socio        
+from reciboStatus a 
+join (
+  select x.idCampania, y.tipoMedioCobro, count(x.idMedioCobro) conteo 
+  from campaniaMedioCobro x 
+  left join cat_medioCobro y on x.idMedioCobro=y.idMedioCobro 
+  group by x.idCampania, y.tipoMedioCobro 
+  having count(x.idMedioCobro) >1 
+) b on a.idCampania=b.idCampania   
+left join campania c on a.idCampania=c.idCampania 
+left join socio d on c.idSocio = d.idSocio 
+left join cat_socio e on d.idCatSocio=e.idCatSocio 
+WHERE a.activo=1 
+AND a.idStatus in (3,8)]]></query> 
+          </component-definition> 
+        </action-definition>
+  
+        <action-definition> 
+          <component-name>SecureFilterComponent</component-name>
+          <action-type>Prompt IDCAMPANIA, TC, TD</action-type>
+          <action-inputs> 
+            <IDCAMPANIA type="integer"/>  
+            <IDMEDIOCOBROTC type="string"/>  
+            <tc-result type="result-set"/>  
+            <IDMEDIOCOBROTD type="string"/>  
+            <td-result type="result-set"/>  
+            <campania_list type="result-set"/> 
+          </action-inputs>
+          <action-resources> 
+            <parameter-template type="resource"/>  
+            <pageTemplate type="resource"/> 
+          </action-resources>
+          <component-definition> 
+            <selections> 
+              <IDCAMPANIA style="select" prompt-if-one-value="true"> 
+                <title>Campaña</title>  
+                <filter value-col-name="idCamp" display-col-name="socio">campania_list</filter> 
+              </IDCAMPANIA>  
+              <IDMEDIOCOBROTC style="select" prompt-if-one-value="true"> 
+                <title>Medio Cobro TC</title>  
+                <filter value-col-name="MEDIOCOBROTC" display-col-name="MEDIOCOBROTC">tc-result</filter> 
+              </IDMEDIOCOBROTC>  
+              <IDMEDIOCOBROTD style="select" prompt-if-one-value="true"> 
+                <title>Medio Cobro TD</title>  
+                <filter value-col-name="MEDIOCOBROTD" display-col-name="MEDIOCOBROTD">td-result</filter> 
+              </IDMEDIOCOBROTD> 
+            </selections>  
+            <target><![CDATA[Report_Window]]></target>  
+            <xsl><![CDATA[pageTemplate]]></xsl> 
+          </component-definition> 
+        </action-definition>
+ 
+      </actions>
+  
+      <actions> 
+        <condition><![CDATA[campania_qry.getRowCount()==0]]></condition>  
+        <action-definition> 
+          <component-name>KettleComponent</component-name>
+          <action-type>enviaCobro</action-type>
+          <action-inputs> 
+            <usuario type="string"/> 
+          </action-inputs>
+          <action-resources/>
+          <action-outputs> 
+            <kettle-execution-log type="string" mapping="envioacobrolog"/>  
+            <kettle-execution-status type="string" mapping="envio"/> 
+          </action-outputs>
+          <component-definition> 
+            <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+            <job><![CDATA[envioacobro]]></job>  
+            <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+          </component-definition> 
+        </action-definition>
+ 
+      </actions>
+  
+      <action-definition> 
+        <component-name>SQLExecute</component-name>
+        <action-type>actualizaProceso</action-type>
+        <action-outputs/>
+        <component-definition> 
+          <query><![CDATA[update proceso set status=0 where idProceso=1;]]></query>  
+          <jndi><![CDATA[oracle]]></jndi> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>KettleComponent</component-name>
+        <action-type>Lista Archivos Envio</action-type>
+        <action-resources/>
+        <action-outputs> 
+          <kettle-execution-log type="string" mapping="logkettle"/>  
+          <transformation-output-rows type="result-set" mapping="datos"/> 
+        </action-outputs>
+        <component-definition> 
+          <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+          <transformation><![CDATA[listaArchivos]]></transformation>  
+          <monitor-step><![CDATA[salida]]></monitor-step>  
+          <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>JavascriptRule</component-name>
+        <action-type>JavaScript</action-type>
+        <action-inputs> 
+          <datos type="result-set"/> 
+        </action-inputs>
+        <action-outputs> 
+          <url type="string"/> 
+        </action-outputs>
+        <component-definition> 
+          <script><![CDATA[var results = new JavaScriptResultSet();
+results = datos;
+var url="";
+for(var i = 0;i < results.length;i++)
+  {
+  url=url + results.getValueAt( 0,i);
+  }]]></script> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>TemplateComponent</component-name>
+        <action-type>Termino Exitosamente</action-type>
+        <action-inputs/>
+        <action-outputs> 
+          <output-message type="string" mapping="termino"/> 
+        </action-outputs>
+        <component-definition> 
+          <template><![CDATA[<html>
+<link rel="stylesheet" type="text/css" href="/pentaho-style/pentaho.css"></link>
+<h1>El env&iacute;o a cobro se termin&oacute; exitosamente.</h1>
+<br>
+<a href="ViewAction?solution=cobranza&path=Envio+a+Cobro&action=ListaArchivos.xaction">Ver archivos generados</a>
+<br>
+<br>
+</html>]]></template> 
+        </component-definition> 
+      </action-definition>
+ 
+    </actions>
+  
+    <actions> 
+      <condition><![CDATA[statusProceso==2]]></condition>  
+      <action-definition> 
+        <component-name>TemplateComponent</component-name>
+        <action-type>Proceso en ejecucion</action-type>
+        <action-outputs> 
+          <output-message type="string" mapping="termino"/> 
+        </action-outputs>
+        <component-definition> 
+          <template><![CDATA[<html>
+<h1>El proceso de Envío a Cobro se esta ejecutando en este momento.</h1>
+<br>
+<br>
+<br>
+</html>]]></template> 
+        </component-definition> 
+      </action-definition>
+ 
+    </actions>
+ 
+  </actions> 
+</action-sequence>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>llenarTablaTMP</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author/>  
+    <description>Empty blank action sequence document</description>  
+    <help/>  
+    <result-type>none</result-type>  
+    <icon/> 
+  </documentation>
+
+  <inputs> 
+    <usuario type="string"> 
+      <sources> 
+        <security>principalName</security> 
+      </sources>  
+      <default-value><![CDATA[landy]]></default-value> 
+    </usuario> 
+  </inputs>
+
+  <outputs> 
+    <DATA-ITEM type="string"> 
+      <destinations> 
+        <response>content</response> 
+      </destinations> 
+    </DATA-ITEM> 
+  </outputs>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>KettleComponent</component-name>
+      <action-type>enviaCobro</action-type>
+      <action-inputs> 
+        <usuario type="string"/> 
+      </action-inputs>
+      <action-resources/>
+      <action-outputs> 
+        <kettle-execution-log type="string" mapping="envioacobrolog"/>  
+        <kettle-execution-status type="string" mapping="envio"/> 
+      </action-outputs>
+      <component-definition> 
+        <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+        <job><![CDATA[envioacobro]]></job>  
+        <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>SQLExecute</component-name>
+      <action-type>actualizaProceso</action-type>
+      <component-definition> 
+        <query><![CDATA[update proceso set status=0 where idProceso=1;]]></query>  
+        <jndi><![CDATA[oracle]]></jndi> 
+      </component-definition> 
+    </action-definition>
+  
+    <action-definition> 
+      <component-name>TemplateComponent</component-name>
+      <action-type>Termino Exitosamente</action-type>
+      <action-outputs> 
+        <output-message type="string" mapping="DATA-ITEM"/> 
+      </action-outputs>
+      <component-definition> 
+        <template><![CDATA[<html>
+<link rel="stylesheet" type="text/css" href="/pentaho-style/pentaho.css"></link>
+<h1>El env&iacute;o a cobro se termin&oacute; exitosamente.</h1>
+<br>
+<a href="ViewAction?solution=cobranza&path=Envio+a+Cobro&action=ListaArchivos.xaction">Ver archivos generados</a>
+<br>
+<br>
+</html>]]></template> 
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>updProceso</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author/>  
+    <description>Empty blank action sequence document</description>  
+    <help/>  
+    <result-type>none</result-type>  
+    <icon/> 
+  </documentation>
+
+  <inputs> 
+    <idProceso type="integer">
+      <sources>
+        <request>idProceso</request>
+      </sources>
+      <default-value><![CDATA[0]]></default-value>
+    </idProceso>
+    <valor type="integer">
+      <default-value><![CDATA[0]]></default-value>
+      <sources>
+        <request>valor</request>
+      </sources>
+    </valor>
+  </inputs>
+
+  <outputs> 
+    <idProceso type="integer">
+      <destinations>
+        <response>content</response>
+      </destinations>
+    </idProceso>
+    <valor type="integer">
+      <destinations>
+        <response>content</response>
+      </destinations>
+    </valor>
+  </outputs>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>KettleComponent</component-name>
+      <action-type>updProceso</action-type>
+      <action-inputs> 
+        <idProceso type="integer"/>
+        <valor type="integer"/>
+      </action-inputs>
+      <action-resources/>
+      <action-outputs> 
+        <kettle-execution-log type="string" mapping="updProcesolog"/>  
+        <kettle-execution-status type="string" mapping="actualizo"/> 
+      </action-outputs>
+      <component-definition> 
+        <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+        <job><![CDATA[updProceso]]></job>  
+        <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

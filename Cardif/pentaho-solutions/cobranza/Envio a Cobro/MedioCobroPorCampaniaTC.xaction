@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <name>DepartmentsForRegion.xaction</name>
+  <title>Medio de Cobro por Campania TC</title>
+  <version>1</version>
+  <logging-level>debug</logging-level>
+  <documentation> 
+    <author>Michael D'Amour</author>  
+    <description>Medio de Cobro por Campania TC</description>  
+    <help/>  
+    <result-type>none</result-type>  
+    <icon>CurrentPositionTitles.png</icon> 
+  </documentation>
+
+  <inputs> 
+    <IDCAMPANIA type="integer"> 
+      <default-value><![CDATA[0]]></default-value>  
+      <sources> 
+        <request>IDCAMPANIA</request> 
+      </sources> 
+    </IDCAMPANIA> 
+  </inputs>
+
+  <outputs> 
+    <tc-result type="result-set"/> 
+  </outputs>
+
+  <resources/>
+  
+  <visible>false</visible>  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Perform SQL Query</action-type>
+      <action-inputs> 
+        <IDCAMPANIA type="string"/> 
+      </action-inputs>
+      <action-outputs> 
+        <query-result type="result-set" mapping="tc-result"/> 
+      </action-outputs>
+      <component-definition> 
+        <query><![CDATA[SELECT a.idMedioCobro||'| '||b.medioCobro as MEDIOCOBROTC 
+from campaniaMedioCobro a 
+left join cat_medioCobro b on a.idMedioCobro=b.idMedioCobro 
+where a.idCampania={PREPARE:IDCAMPANIA} 
+AND b.tipoMedioCobro='TC' 
+ORDER BY a.orden]]></query>  
+        <jndi><![CDATA[oracle]]></jndi>
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

@@ -1,0 +1,429 @@
+<html xmlns:xf="http://www.w3.org/2002/xforms">
+   <head>
+	<!-- do not include a <meta> tag -->
+      <link rel="stylesheet" type="text/css" href="/pentaho-style/pentaho.css"></link>
+      <title>Dynamic Dependent Parameter Page Example</title>
+    
+      			<script><![CDATA[
+      			
+      			  var url=unescape('ViewAction?');
+      			  var target=unescape('');
+      			  function doForm() {
+      			    var submitUrl = url;
+      			    var form = document.forms['parameter-form'];
+      			    var elements = form.elements;
+      			    var i;
+      			    for( i=0; i<elements.length; i++ ) {
+      			      if( elements[i].type == 'select-one' || elements[i].type == 'text' || elements[i].type == 'hidden') {
+      			        submitUrl += '&' + elements[ i ].name + '=' + escape( elements[ i ].value );
+      			      } else if( elements[i].type == 'radio' ) {
+      			      	if( elements[i].checked ) {
+      			          submitUrl += '&' + elements[ i ].name + '=' + escape( elements[ i ].value );
+      			      	}
+      			      } else if( elements[i].type == 'checkbox' ) {
+      			      	if( elements[i].checked ) {
+      				      submitUrl += '&' + elements[i].name + "=" + escape( elements[i].value );
+      			      	}
+      			      } else if( elements[i].type == 'select-multiple' ) {
+      				    var options = elements[i].options;
+      				    var j;
+      				    for( j=0; j!=options.length; j++ ) {
+      				      if( options[j].selected ) {
+      	  			        submitUrl += '&' + elements[i].name + '=' + escape( options[ j ].value );
+      				      }
+      				    }
+      				  }
+      			    }
+      			    //alert('url: '+submitUrl);
+					embedUrl(submitUrl);
+      			    return false;
+      			  }
+
+				  function returnObjById( id ) {
+    				if (document.getElementById)
+        				var returnVar = document.getElementById(id);
+    				else if (document.all)
+        				var returnVar = document.all[id];
+    				else if (document.layers)
+        				var returnVar = document.layers[id];
+    				return returnVar;
+			      }
+
+	              function sendRequest( url, query, func, dependentFunction ) {
+      				http_request = false;
+	  				var returnType = "text/xml";
+	  
+      				if (window.XMLHttpRequest) { // Mozilla, Safari,...
+         			  http_request = new XMLHttpRequest();
+         			  if (http_request.overrideMimeType) {
+                        http_request.overrideMimeType(returnType);
+                      }
+                    } else if (window.ActiveXObject) { // IE
+                      try {
+                        http_request = new ActiveXObject("Msxml2.XMLHTTP");
+                      } catch (e) {
+                        try {
+                          http_request = new ActiveXObject("Microsoft.XMLHTTP");
+                        } catch (e) {}
+                      }
+                    }
+                    if (!http_request) {
+                      alert('Cannot create XMLHTTP instance');
+                      return false;
+                    }
+      					//alert("query: "+query+" url: "+url+" func: "+func+" dependentFunction: "+dependentFunction);
+                    http_request.onreadystatechange = function() { pentahoResponse(http_request, func, dependentFunction); };
+                    http_request.open('POST', url, true);
+                    http_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    http_request.setRequestHeader("Content-length", query.length);
+                    http_request.setRequestHeader("Connection", "close");
+                    http_request.send(query);
+                  }
+                  
+                  function sendRequest2( url, query, func, dependentFunction ) {
+      				http_request = false;
+	  				var returnType = "text/xml";
+	  
+      				if (window.XMLHttpRequest) { // Mozilla, Safari,...
+         			  http_request2 = new XMLHttpRequest();
+         			  if (http_request2.overrideMimeType) {
+                        http_request2.overrideMimeType(returnType);
+                      }
+                    } else if (window.ActiveXObject) { // IE
+                      try {
+                        http_request2 = new ActiveXObject("Msxml2.XMLHTTP");
+                      } catch (e) {
+                        try {
+                          http_request2 = new ActiveXObject("Microsoft.XMLHTTP");
+                        } catch (e) {}
+                      }
+                    }
+                    if (!http_request2) {
+                      alert('Cannot create XMLHTTP instance');
+                      return false;
+                    }
+      
+                    http_request2.onreadystatechange = function() { pentahoResponse(http_request2, func, dependentFunction); };
+                    http_request2.open('POST', url, true);
+                    http_request2.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    http_request2.setRequestHeader("Content-length", query.length);
+                    http_request2.setRequestHeader("Connection", "close");
+                    http_request2.send(query);
+                  }
+                  
+                  function sendRequest3( url, query, func, dependentFunction ) {
+      				http_request3 = false;
+	  				var returnType = "text/xml";
+	  
+      				if (window.XMLHttpRequest) { // Mozilla, Safari,...
+         			  http_request3 = new XMLHttpRequest();
+         			  if (http_request3.overrideMimeType) {
+                        http_request3.overrideMimeType(returnType);
+                      }
+                    } else if (window.ActiveXObject) { // IE
+                      try {
+                        http_request3 = new ActiveXObject("Msxml2.XMLHTTP");
+                      } catch (e) {
+                        try {
+                          http_request3 = new ActiveXObject("Microsoft.XMLHTTP");
+                        } catch (e) {}
+                      }
+                    }
+                    if (!http_request3) {
+                      alert('Cannot create XMLHTTP instance');
+                      return false;
+                    }
+      
+                    http_request3.onreadystatechange = function() { pentahoResponse2(http_request3, func, dependentFunction); };
+                    http_request3.open('POST', url, true);
+                    http_request3.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    http_request3.setRequestHeader("Content-length", query.length);
+                    http_request3.setRequestHeader("Connection", "close");
+                    http_request3.send(query);
+                    
+                  }
+                  
+                  function sendRequest4( url, query, func, dependentFunction ) {
+      				http_request4 = false;
+	  				var returnType = "text/xml";
+	  
+      				if (window.XMLHttpRequest) { // Mozilla, Safari,...
+         			  http_request4 = new XMLHttpRequest();
+         			  if (http_request4.overrideMimeType) {
+                        http_request4.overrideMimeType(returnType);
+                      }
+                    } else if (window.ActiveXObject) { // IE
+                      try {
+                        http_request4 = new ActiveXObject("Msxml2.XMLHTTP");
+                      } catch (e) {
+                        try {
+                          http_request4 = new ActiveXObject("Microsoft.XMLHTTP");
+                        } catch (e) {}
+                      }
+                    }
+                    if (!http_request4) {
+                      alert('Cannot create XMLHTTP instance');
+                      return false;
+                    }
+      
+                    http_request4.onreadystatechange = function() { pentahoResponse3(http_request4, func, dependentFunction); };
+                    http_request4.open('POST', url, true);
+                    http_request4.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    http_request4.setRequestHeader("Content-length", query.length);
+                    http_request4.setRequestHeader("Connection", "close");
+                    http_request4.send(query);
+                    
+                  }
+
+                  function pentahoResponse(http_request, func, dependentFunction) {
+                    if (http_request.readyState == 4) {
+                      if (http_request.status == 200) {
+				        var content = http_request.responseText; 
+				        eval( func+'content )' );
+				        eval( dependentFunction );
+                      } else {
+				        eval( func+'( "There was a problem with the request." )' );
+                      }
+                    }
+                  }
+                  
+                  function pentahoResponse2(http_request, func, dependentFunction) {
+                    if (http_request.readyState == 4) {
+                      if (http_request.status == 200) {
+				        var content = http_request.responseText; 
+						  parseSOAPResultSet2("content",content); 
+                      } else {
+				        eval( func+'( "There was a problem with the request." )' );
+                      }
+                    }
+                  }
+                  
+                  function pentahoResponse3(http_request, func, dependentFunction) {
+                    if (http_request.readyState == 4) {
+                      if (http_request.status == 200) {
+				        var content = http_request.responseText; 
+				        //alert("content: "+content);
+						  parseSOAPResultSet3("content",content); 
+                      } else {
+				        eval( func+'( "There was a problem with the request." )' );
+                      }
+                    }
+                  }
+                  
+                  function parseSOAPResultSet3(dependentControlName, content) {               
+	                CDATA_START_TAG = "<query_result>";
+	                CDATA_END_TAG = "</query_result>";		 
+      				 dependentControl = returnObjById(dependentControlName);
+	                dependentControl.innerHTML = "";
+							//alert("content: "+content);
+	                  cdataBeginIdx = content.indexOf(CDATA_START_TAG);
+	                  cdataEndIdx = content.indexOf(CDATA_END_TAG);
+ 	                  text = content.substring(cdataBeginIdx+CDATA_START_TAG.length, cdataEndIdx);
+	                  content = content.substring(cdataEndIdx+CDATA_END_TAG.length);
+	                  //alert("text: "+text);
+	                  var text2=new String();
+	                  var text2=text.replace(/<COLUMN-HDR-ROW>/g,"<tr>");
+	                  text2=text2.replace(/<\/COLUMN-HDR-ROW>/g,"</tr>");
+	                  text2=text2.replace(/<DATA-ROW>/g,"<tr>");
+	                  text2=text2.replace(/<\/DATA-ROW>/g,"</tr>");
+	                  text2=text2.replace(/<DATA-ITEM><!\[CDATA\[/g,"<td>");
+	                  text2=text2.replace(/\]\]><\/DATA-ITEM>/g,"</td>");
+	                  text2=text2.replace(/<COLUMN-HDR-ITEM><!\[CDATA\[/g,"<td>");
+	                  text2=text2.replace(/\]\]><\/COLUMN-HDR-ITEM>/g,"</td>");
+	                  var text3= new String();
+	                  text3="<table border='1'>"+text2+"</table>";
+	                  //alert("text3: "+text3);
+	                  dependentControl.innerHTML = text3;
+	                
+	              }
+    
+	              function paramService( params, func, dependentFunction ) {
+		            var url = "ServiceAction";
+		            var query = "";
+		            if( params ) {
+		              query += "?";
+			          for( idx=0; idx<params.length; idx+=2 ) {
+				        query += "&" +escape( params[idx] ) + "=" + escape( params[idx+1] );
+			          }
+		            }
+		            //alert("query: "+query+" url: "+url+" func: "+func+" dependentFunction: "+dependentFunction);
+		            return sendRequest( url, query, func, dependentFunction );
+	              }
+	              
+	              function paramService2( params, func, dependentFunction ) {
+		            var url = "ServiceAction";
+		            var query = "";
+		            if( params ) {
+		              query += "?";
+			          for( idx=0; idx<params.length; idx+=2 ) {
+				        query += "&" +escape( params[idx] ) + "=" + escape( params[idx+1] );
+			          }
+		            }
+		            //alert("query: "+query);
+		            return sendRequest2( url, query, func, dependentFunction );
+	              }   
+	              
+	              function paramService3( params, func, dependentFunction ) {
+		            var url = "ServiceAction";
+		            var query = "";
+		            if( params ) {
+		              query += "?";
+			          for( idx=0; idx<params.length; idx+=2 ) {
+				        query += "&" +escape( params[idx] ) + "=" + escape( params[idx+1] );
+			          }
+		            }
+		            //alert("query: "+query);
+		            return sendRequest3( url, query, func, dependentFunction );
+	              }  
+	              
+	              function paramService4( params, func, dependentFunction ) {
+		            var url = "ServiceAction";
+		            var query = "";
+		            if( params ) {
+		              query += "?";
+			          for( idx=0; idx<params.length; idx+=2 ) {
+				        query += "&" +escape( params[idx] ) + "=" + escape( params[idx+1] );
+			          }
+		            }
+		            //alert("query: "+query);
+		            return sendRequest4( url, query, func, dependentFunction );
+	              }  
+	              
+	              function parseSOAPResultSet(dependentControlName, content) {	                
+	                CDATA_START_TAG = "\<DATA-ITEM\>\<!\[CDATA\[";
+	                CDATA_END_TAG = "\]\]\>\</DATA-ITEM\>";
+      				dependentControl = returnObjById(dependentControlName);
+	                dependentControl.options.length = 0;
+                    index = 0;
+	                while (content.indexOf(CDATA_START_TAG) >= 0) {
+	                  cdataBeginIdx = content.indexOf(CDATA_START_TAG);
+	                  cdataEndIdx = content.indexOf(CDATA_END_TAG);
+ 	                  text = content.substring(cdataBeginIdx+CDATA_START_TAG.length, cdataEndIdx);
+	                  content = content.substring(cdataEndIdx+CDATA_END_TAG.length);
+	                  dependentControl.options[index] = new Option(text, text);
+	                  index++;
+	                }
+	              }
+	              
+	              function parseSOAPResultSet2(dependentControlName, content) {               
+	                CDATA_START_TAG = "\<DATA-ITEM\>\<!\[CDATA\[";
+	                CDATA_END_TAG = "\]\]\>\</DATA-ITEM\>";		 
+      				 dependentControl = returnObjById(dependentControlName);
+	                dependentControl.innerHTML = "";
+
+	                  cdataBeginIdx = content.indexOf(CDATA_START_TAG);
+	                  cdataEndIdx = content.indexOf(CDATA_END_TAG);
+ 	                  text = content.substring(cdataBeginIdx+CDATA_START_TAG.length, cdataEndIdx);
+	                  content = content.substring(cdataEndIdx+CDATA_END_TAG.length);
+	                  dependentControl.innerHTML = text;
+	                
+	              }
+	                            
+	              function embedUrl(url) {
+					var myDiv = returnObjById("content");
+					myDiv.style.visibility='visible';
+					myDiv.innerHTML = "<IFRAME style=\"border: none;\" height=\"600\" width=\"100%\" src=\"" + url + "\"/>";
+	              }
+	              	              
+				  function returnObjById( id ) {
+					if (document.getElementById)
+						var returnVar = document.getElementById(id);
+					else if (document.all)
+						var returnVar = document.all[id];
+					else if (document.layers)
+        				var returnVar = document.layers[id];
+					return returnVar;
+				  }
+	              
+                ]]>
+      			</script>
+      		
+	{xform-header}
+
+   </head>
+   <body style="border:2px solid #dddddd">
+      <div style="margin:10px"><span class="portlet-section-header">Envío a Cobro</span></div>
+      <div style="margin:10px;border:1px solid #808080;padding:5px;" id="formulario">
+         <form name="parameter-form" id="parameter-form" method="POST">
+            <table width="100%" style="padding:5px;">
+               <tr>
+                  <td class="portlet-font">Configuración de Medios de cobro</td>
+               </tr>
+               
+               <tr>
+                  <td class="portlet-font">Campaña: {IDCAMPANIA}</td>
+               </tr>
+               <tr>
+                  <td class="portlet-font">Medio Cobro TC: {IDMEDIOCOBROTC}</td>
+               </tr>
+               <tr>
+                  <td class="portlet-font">Medio Cobro TD: {IDMEDIOCOBROTD}</td>
+               </tr>
+               <tr>
+                  <td><br/><input type="button" name="go" value="Asigna Medios de Cobro..." onClick="updTablaFunction();listaTablaFunction();"/>
+							        
+							        <input type="button" name="go2" id="go2" value="Cancelar" onClick="cancelarFunction()"/>         
+                  </td>
+                  
+               </tr>
+               <tr>
+                  <td><br/><input type="button" name="go" value="Terminar y Enviar a cobro..." onClick="enviaCobroFunction()"/>
+							                  
+                  </td>
+               </tr>
+            </table>
+		{solution}
+		{action}
+		{path}  
+	    </form>
+
+	  
+	<script><![CDATA[
+		var idcampaniaControl = returnObjById("IDCAMPANIA");
+	  idcampaniaControl.onchange=idcampaniaChangeFunction;
+	  
+	  	var idmediocobrotcControl = returnObjById("IDMEDIOCOBROTC");
+	  	var idmediocobrotdControl = returnObjById("IDMEDIOCOBROTD");
+  	
+      
+     function idcampaniaChangeFunction() {
+        paramService2(new Array( "IDCAMPANIA", idcampaniaControl.value, "solution", "cobranza", "path", "Envio a Cobro", "action", "MedioCobroPorCampaniaTD.xaction" ), "parseSOAPResultSet(\"IDMEDIOCOBROTD\", ", "");
+        paramService(new Array( "IDCAMPANIA", idcampaniaControl.value, "solution", "cobranza", "path", "Envio a Cobro", "action", "MedioCobroPorCampaniaTC.xaction" ), "parseSOAPResultSet(\"IDMEDIOCOBROTC\", ", "");     
+        
+      }
+      
+     function updTablaFunction() {
+        paramService(new Array( "IDCAMPANIA", idcampaniaControl.value,"IDMEDIOCOBROTC", idmediocobrotcControl.value,"IDMEDIOCOBROTD", idmediocobrotdControl.value, "solution", "cobranza", "path", "Envio a Cobro", "action", "llenarTablaTMP.xaction" ), "", "");     
+        //paramService4(new Array( "solution", "cobranza", "path", "Envio a Cobro", "action", "listaTMP_COB.xaction" ), "parseSOAPResultSet(\"content\", ", "");
+      } 
+      
+     function listaTablaFunction(){
+     setTimeout(
+     	paramService4(new Array( "solution", "cobranza", "path", "Envio a Cobro", "action", "listaTMP_COB.xaction" ), "parseSOAPResultSet(\"content\", ", "")
+     ,12500);
+     }
+     
+     function enviaCobroFunction(){
+     		botonCancelar=returnObjById("go2");
+     		botonCancelar.style.visibility = "hidden";
+     		divContent = returnObjById("content");
+     		divContent.innerHTML = "Procesando Env&iacute;o a Cobro...";
+     	  paramService3(new Array( "solution", "cobranza", "path", "Envio a Cobro", "action", "ejecutaEnvioCobro.xaction" ), "parseSOAPResultSet(\"content\", ", "");
+     }
+     
+     function cancelarFunction(){
+     		divFormulario = returnObjById("formulario");
+     		divContent = returnObjById("content");
+	      paramService(new Array( "idProceso", 1 ,"valor", 0 , "solution", "cobranza", "path", "Envio a Cobro", "action", "updProceso.xaction" ), "", "");
+	      divFormulario.innerHTML = "Proceso de Env&iacute;o a Cobro Cancelado";
+	      divContent.innerHTML = "";
+     }
+      
+    ]]></script>
+
+      </div>
+ 		<div width="100%" style="border: 1px solid rgb(128, 128, 128); margin: 10px; padding: 5px;" id="content">
+			   
+      </div>
+   </body>
+</html>

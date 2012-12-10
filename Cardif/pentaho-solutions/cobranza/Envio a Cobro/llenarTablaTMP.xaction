@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>llenarTablaTMP</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author/>  
+    <description>Empty blank action sequence document</description>  
+    <help/>  
+    <result-type>none</result-type>  
+    <icon/> 
+  </documentation>
+
+  <inputs> 
+    <IDCAMPANIA type="integer"> 
+      <sources> 
+        <request>IDCAMPANIA</request> 
+      </sources>  
+      <default-value><![CDATA[0]]></default-value> 
+    </IDCAMPANIA>  
+    <IDMEDIOCOBROTC type="string"> 
+      <sources> 
+        <request>IDMEDIOCOBROTC</request> 
+      </sources>  
+      <default-value><![CDATA[0: SIN MEDIO DE COBRO]]></default-value> 
+    </IDMEDIOCOBROTC>  
+    <IDMEDIOCOBROTD type="string"> 
+      <sources> 
+        <request>IDMEDIOCOBROTD</request> 
+      </sources>  
+      <default-value><![CDATA[0: SIN MEDIO DE COBRO]]></default-value> 
+    </IDMEDIOCOBROTD> 
+  </inputs>
+
+  <outputs> 
+    <IDCAMPANIA type="integer"> 
+      <destinations> 
+        <contentrepo>IDCAMPANIA</contentrepo> 
+      </destinations> 
+    </IDCAMPANIA>  
+    <IDMEDIOCOBROTC type="string"> 
+      <destinations> 
+        <contentrepo>IDMEDIOCOBROTC</contentrepo> 
+      </destinations> 
+    </IDMEDIOCOBROTC>  
+    <IDMEDIOCOBROTD type="string"> 
+      <destinations> 
+        <contentrepo>IDMEDIOCOBROTD</contentrepo> 
+      </destinations> 
+    </IDMEDIOCOBROTD> 
+  </outputs>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>KettleComponent</component-name>
+      <action-type>llenaTablaTMP</action-type>
+      <action-inputs> 
+        <IDCAMPANIA type="integer"/>  
+        <IDMEDIOCOBROTC type="string"/>  
+        <IDMEDIOCOBROTD type="string"/> 
+      </action-inputs>
+      <action-resources/>
+      <action-outputs> 
+        <kettle-execution-log type="string" mapping="updTablaTMPlog"/>  
+        <kettle-execution-status type="string" mapping="actualizo"/> 
+      </action-outputs>
+      <component-definition> 
+        <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+        <job><![CDATA[updTablaTMP]]></job>  
+        <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

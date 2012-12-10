@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>TMP_COB</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author>Landy Reyes</author>  
+    <description>Empty blank action sequence document</description>  
+    <help/>  
+    <result-type>none</result-type>  
+    <icon/> 
+  </documentation>
+
+  <inputs/>
+
+  <outputs> 
+    <query_result type="result-set"> 
+      <destinations> 
+        <contentrepo>query_result</contentrepo> 
+      </destinations> 
+    </query_result> 
+  </outputs>
+
+  <resources/>
+  
+  <actions> 
+    <action-definition> 
+      <component-name>SQLLookupRule</component-name>
+      <action-type>Relational</action-type>
+      <action-outputs> 
+        <query-result type="result-set" mapping="query_result"/>  
+        <idCampania type="integer"/>  
+        <idMedioCobro type="integer"/>  
+        <tipoMedioCobro type="string"/>  
+        <medioCobro type="string"/>  
+        <socio type="string"/>
+      </action-outputs>
+      <component-definition> 
+        <live><![CDATA[true]]></live>  
+        <query><![CDATA[select a.idCampania, a.idMedioCobro, a.tipoMedioCobro, b.medioCobro, e.socio 
+from TMP_COB a 
+LEFT JOIN cat_medioCobro b on a.idMedioCobro=b.idMedioCobro 
+LEFT JOIN campania c on a.idCampania=c.idCampania 
+left join socio d on c.idSocio=d.idSocio 
+left join cat_socio e on d.idCatSocio=e.idCatSocio
+where d.principal=1]]></query>  
+        <jndi><![CDATA[oracle]]></jndi> 
+      </component-definition> 
+    </action-definition>
+ 
+  </actions> 
+</action-sequence>

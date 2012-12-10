@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<action-sequence> 
+  <title>ListarArchivos</title>
+  <version>1</version>
+  <logging-level>ERROR</logging-level>
+  <documentation> 
+    <author/>  
+    <description>Envío a cobro de recibos con estatus En proceso</description>  
+    <help/>  
+    <result-type/>  
+    <icon/> 
+  </documentation>
+
+  <inputs> 
+    <usuario type="string"> 
+      <sources> 
+        <security>principalName</security> 
+      </sources>  
+      <default-value><![CDATA[landy]]></default-value> 
+    </usuario>  
+    <IDCAMPANIA type="integer"> 
+      <default-value><![CDATA[0]]></default-value>  
+      <sources> 
+        <request>IDCAMPANIA</request> 
+      </sources> 
+    </IDCAMPANIA>  
+    <campania_list type="result-set"> 
+      <default-value type="result-set"> 
+        <row> 
+          <idCamp>0</idCamp> 
+        </row> 
+      </default-value>  
+      <columns> 
+        <idCamp type="string"/> 
+      </columns> 
+    </campania_list>  
+    <tc-result type="result-set"> 
+      <default-value type="result-set"> 
+        <row> 
+          <MEDIOCOBROTC>0|No hay medio de cobro TC</MEDIOCOBROTC> 
+        </row> 
+      </default-value>  
+      <sources> 
+        <request>tc-result</request> 
+      </sources>  
+      <columns> 
+        <MEDIOCOBROTC type="string"/> 
+      </columns> 
+    </tc-result>  
+    <td-result type="result-set"> 
+      <default-value type="result-set"> 
+        <row> 
+          <MEDIOCOBROTD>0|No hay medio de cobro TD</MEDIOCOBROTD> 
+        </row> 
+      </default-value>  
+      <sources> 
+        <request>td-result</request> 
+      </sources>  
+      <columns> 
+        <MEDIOCOBROTD type="string"/> 
+      </columns> 
+    </td-result>  
+    <IDMEDIOCOBROTC type="string"> 
+      <sources> 
+        <request>IDMEDIOCOBROTC</request> 
+      </sources>  
+      <default-value><![CDATA[0|No hay Medio de Cobro TC]]></default-value> 
+    </IDMEDIOCOBROTC>  
+    <IDMEDIOCOBROTD type="string"> 
+      <sources> 
+        <request>IDMEDIOCOBROTD</request> 
+      </sources>  
+      <default-value><![CDATA[0|No hay Medio de cobro TD]]></default-value> 
+    </IDMEDIOCOBROTD>  
+    <statusProceso type="integer">
+      <sources>
+        <request>statusProceso</request>
+      </sources>
+      <default-value><![CDATA[0]]></default-value>
+    </statusProceso>
+  </inputs>
+
+  <outputs> 
+    <url type="string">
+      <destinations>
+        <contentrepo>url</contentrepo>
+      </destinations>
+    </url>
+  </outputs>
+
+  <resources> 
+    <pageTemplate> 
+      <solution-file> 
+        <location>DependentParameterTemplate2.html</location>  
+        <mime-type>text/xml</mime-type> 
+      </solution-file> 
+    </pageTemplate> 
+  </resources>
+  
+  <actions> 
+    <actions> 
+      <condition><![CDATA[statusProceso==0]]></condition>  
+      <action-definition> 
+        <component-name>KettleComponent</component-name>
+        <action-type>Lista Archivos Envio</action-type>
+        <action-resources/>
+        <action-outputs> 
+          <kettle-execution-log type="string" mapping="logkettle"/>  
+          <transformation-output-rows type="result-set" mapping="datos"/> 
+        </action-outputs>
+        <component-definition> 
+          <directory><![CDATA[home/cobranza/envioCobro]]></directory>  
+          <transformation><![CDATA[listaArchivos]]></transformation>  
+          <monitor-step><![CDATA[salida]]></monitor-step>  
+          <kettle-logging-level><![CDATA[detail]]></kettle-logging-level> 
+        </component-definition> 
+      </action-definition>
+  
+      <action-definition> 
+        <component-name>JavascriptRule</component-name>
+        <action-type>JavaScript</action-type>
+        <action-inputs> 
+          <datos type="result-set"/> 
+        </action-inputs>
+        <action-outputs> 
+          <url type="string"/> 
+        </action-outputs>
+        <component-definition> 
+          <script><![CDATA[var results = new JavaScriptResultSet();
+results = datos;
+var url="";
+for(var i = 0;i < results.length;i++)
+  {
+  url=url + results.getValueAt( 0,i);
+  }]]></script> 
+        </component-definition> 
+      </action-definition>
+ 
+    </actions>
+ 
+  </actions> 
+</action-sequence>
